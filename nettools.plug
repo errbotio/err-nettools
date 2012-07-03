@@ -1,0 +1,6 @@
+[Core]
+Name = Nettools
+Module = nettools
+
+[Documentation]
+Description = various network query tools
