@@ -11,12 +11,12 @@ import whois
 
 FLAGS = 'http://media.xfire.com/images/flags/%s.gif'
 RESULT = """\
-City: %(city)s [%(postal_code)s]
-Region: %(region_name)s [%(region)s]
-Country : %(country_name)s
+     City: %(city)s [%(postal_code)s]
+   Region: %(region_name)s [%(region)s]
+  Country: %(country_name)s
 Time Zone: %(time_zone)s
 Longitude: %(longitude)f
-Latitude: %(latitude)f
+ Latitude: %(latitude)f
 """
 
 def is_valid_ipv4_address(address):
