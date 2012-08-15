@@ -3,11 +3,19 @@ import logging
 import os
 import GeoIP
 import urllib
-from errbot.botplugin import BotPlugin
 from errbot.errBot import PLUGIN_DIR
-from errbot.jabberbot import botcmd
 import socket
 import whois
+
+# Backward compatibility
+from errbot.version import VERSION
+from errbot.utils import version2array
+if version2array(VERSION) >= [1,6,0]:
+    from errbot import botcmd, BotPlugin
+else:
+    from errbot.botplugin import BotPlugin
+    from errbot.jabberbot import botcmd
+
 
 FLAGS = 'http://media.xfire.com/images/flags/%s.gif'
 RESULT = """\
