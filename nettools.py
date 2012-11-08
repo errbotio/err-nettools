@@ -7,15 +7,7 @@ from errbot.errBot import PLUGIN_DIR
 import socket
 import whois
 
-# Backward compatibility
-from errbot.version import VERSION
-from errbot.utils import version2array
-if version2array(VERSION) >= [1,6,0]:
-    from errbot import botcmd, BotPlugin
-else:
-    from errbot.botplugin import BotPlugin
-    from errbot.jabberbot import botcmd
-
+from errbot import botcmd, BotPlugin
 
 FLAGS = 'http://media.xfire.com/images/flags/%s.gif'
 RESULT = """\
@@ -45,7 +37,6 @@ GEOIP_DB = PLUGIN_DIR + os.sep + 'GeoLiteCity.dat'
 class Nettools(BotPlugin):
 
     def activate(self):
-        #self.gi = GeoIP.new(GeoIP.GEOIP_MEMORY_CACHE)
         if not os.path.exists(GEOIP_DB + '.gz'):
             logging.warning('I am downloading the geoip DB, please wait ...')
             urllib.urlretrieve ("http://www.maxmind.com/download/geoip/database/GeoLiteCity.dat.gz", GEOIP_DB + '.gz')
