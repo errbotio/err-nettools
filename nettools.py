@@ -3,7 +3,6 @@ import logging
 import os
 import GeoIP
 import urllib
-from errbot.errBot import PLUGIN_DIR
 import socket
 import whois
 
@@ -32,11 +31,12 @@ def is_valid_ipv4_address(address):
         return False
     return True
 
-GEOIP_DB = PLUGIN_DIR + os.sep + 'GeoLiteCity.dat'
 
 class Nettools(BotPlugin):
+    min_err_version = '1.6.8'
 
     def activate(self):
+        GEOIP_DB = self.plugin_dir + os.sep + 'GeoLiteCity.dat'
         if not os.path.exists(GEOIP_DB + '.gz'):
             logging.warning('I am downloading the geoip DB, please wait ...')
             urllib.urlretrieve ("http://www.maxmind.com/download/geoip/database/GeoLiteCity.dat.gz", GEOIP_DB + '.gz')
