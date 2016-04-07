@@ -1,6 +1,6 @@
 import gzip
+import logging
 import os
-import GeoIP
 import socket
 import threading
 import whois
@@ -12,6 +12,12 @@ try:
 except ImportError:
     # Python 2
     from urllib import urlretrieve
+try:
+    import GeoIP
+except ImportError as e:
+    log = logging.getLogger('errbot.plugins.nettools')
+    log.exception("Couldn't import GeoIP, disabling GeoIP functionality (try `pip install geoip`)")
+    GeoIP = None
 
 
 FLAGS = 'http://media.xfire.com/images/flags/%s.gif'
@@ -44,7 +50,8 @@ class Nettools(BotPlugin):
 
     def activate(self):
         self.gi = None
-        threading.Thread(target=self.init_geoip).start()
+        if GeoIP is not None:
+            threading.Thread(target=self.init_geoip).start()
         super(Nettools, self).activate()
 
     def deactivate(self):
@@ -80,6 +87,8 @@ class Nettools(BotPlugin):
         """
         Display geographical information about the given hostname or IP address.
         """
+        if GeoIP is None:
+            return "Sorry, I cannot do that. geoip isn't available because the GeoIP module couldn't be initialized."
         if self.gi is None:
             return "The GeoIP database isn't available right now. Please try again later."
 
