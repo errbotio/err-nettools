@@ -5,7 +5,8 @@ import socket
 import threading
 import whois
 
-from errbot import arg_botcmd, BotPlugin
+from errbot import arg_botcmd, botcmd, BotPlugin
+from subprocess import Popen, PIPE, STDOUT
 try:
     from urllib.request import urlretrieve
 except ImportError:
@@ -46,6 +47,9 @@ class Nettools(BotPlugin):
         threading.Thread(target=self.init_geoip).start()
         super(Nettools, self).activate()
 
+    def deactivate(self):
+        self.gi = None
+
     def init_geoip(self):
         """Initialize the GeoIP database, downloading it first if needed."""
         GEOIP_DB = os.path.join(self.bot_config.BOT_DATA_DIR, 'GeoLiteCity.dat')
@@ -58,8 +62,18 @@ class Nettools(BotPlugin):
                 f.write(gzip.open(GEOIP_DB + '.gz').read())
         self.gi = GeoIP.open(GEOIP_DB, GeoIP.GEOIP_STANDARD)
 
-    def deactivate(self):
-        self.gi = None
+    def execute(self, cmd, args):
+        """Execute a command and return it's result
+        Args:
+            cmd: A string pointing to the executable to run
+            args: A list of arguments to pass to the executable
+        Returns: String containing output
+        """
+        try:
+            return Popen([cmd] + args, stdout=PIPE, stderr=STDOUT).communicate()[0].decode('utf-8')
+        except OSError as e:
+            self.log.exception(e)
+            return "Failed to run {0}: {1}".format(cmd, e)
 
     @arg_botcmd("address", help="a hostname or IP address to look up", unpack_args=False)
     def geoip(self, mess, args):
@@ -84,3 +98,30 @@ class Nettools(BotPlugin):
         """
         domain = whois.query(args.domain)
         return '\n'.join(['%25s : %s' % (k, v) for k, v in domain.__dict__.items()])
+
+    @botcmd(template="codeblock")
+    def dig(self, mess, args):
+        """Call 'dig'"""
+        return {'code': self.execute('dig', args.split())}
+
+    @botcmd(template="codeblock")
+    def nslookup(self, mess, args):
+        """Call 'nslookup'"""
+        args = args.split()
+        if len(args) < 1 or args[0] in ('-', '-interactive'):
+            # Passing no arguments, or with first argument beginning with - or -interactive
+            # to nslookup causes it to hang due to dropping into interactive mode.
+            # Using self.send() here avoids the template.
+            self.send(
+                identifier=mess.frm,
+                in_reply_to=mess,
+                text="Sorry, interactive mode is not supported"
+            )
+            return
+        else:
+            return {'code': self.execute('nslookup', args)}
+
+    @botcmd(template="codeblock")
+    def host(self, mess, args):
+        """Call 'host'"""
+        return {'code': self.execute('host', args.split())}
