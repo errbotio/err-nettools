@@ -1,2 +1,2 @@
-GeoIP-Python
+GeoIP
 whois
