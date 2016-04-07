@@ -56,6 +56,7 @@ class Nettools(BotPlugin):
 
     def deactivate(self):
         self.gi = None
+        super(Nettools, self).deactivate()
 
     def init_geoip(self):
         """Initialize the GeoIP database, downloading it first if needed."""
