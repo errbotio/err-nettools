@@ -72,7 +72,7 @@ class ThreadedRBLLookup(threading.Thread):
                 self.log.debug("Queue empty, shutting down")
                 return
 
-            reverse = IPy.IP(self.addr).reverseName().rstrip("in-addr.arpa").rstrip("ip6.arpa")
+            reverse = IPy.IP(self.addr).reverseName().replace(".in-addr.arpa.", "").replace(".ip6.arpa.", "")
             lookup_addr = "%s.%s." % (reverse, rbl)
             try:
                 self.log.debug("Checking %s for %s (query addr: %s)", rbl, reverse, lookup_addr)
