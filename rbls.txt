@@ -74,6 +74,7 @@ spam.rbl.msrbl.net
 spamsources.fabel.dk
 spam.spamrats.com
 spamtrap.drbl.drand.net
+srn.surgate.net
 t3direct.dnsbl.net.au
 tor.dnsbl.sectoor.de
 torserver.tor.dnsbl.sectoor.de
